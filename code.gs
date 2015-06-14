@@ -56,28 +56,46 @@ function getPlainStats() {//returns Total,unread,ImportantAndUnread
   return [total.length,unread,important,imp_unread];
   
 }
-function trashEmails()
+function trashEmails()//analising new mails is just waste of time lets go back in time :@udaykrishna
 {prop=PropertiesService.getUserProperties();
- var labels;
+ var labels=0;
  var i=0;
  Logger.log("service started");
- var maillist=GmailApp.getInboxThreads(i,i+500);
+ var x=100;
+ try{
+ var maillist=GmailApp.getInboxThreads(i,i+x);}
+ catch(e){
+ Logger.log("minimum 100 mails are needed. "+e);
+ }
  Logger.log("starting Loop");
- while(maillist.length>0)
- {for(j=0;j<maillist.length;j++){
- var mails=maillist[j].getMessages();
- Utilities.sleep(100);
- for(k=0;k<mails.length;k++){
- Logger.log(mails[k].getDate());
- }
+ do
+ { try{
+   var maillist=GmailApp.getInboxThreads(i,i+x);
+   Logger.log("i = "+i);
+   Logger.log("50th maillist "+maillist[50].getFirstMessageSubject()+' count '+maillist[50].getMessageCount());
+   Logger.log("maillist = "+maillist.length);
+  i+=x;
+  labels+=maillist.length;
+  }
+ catch(e){if(x>1){x/=2;continue;}else{Logger.log("total mails "+labels);break;}
  
  }
- Utilities.sleep(10000);
-  i+=500;
+ }while(maillist.length>0)
+// sealed
+// for(j=0;j<maillist.length;j++){
+// var mails=maillist[j].getMessages();
+// Utilities.sleep(100);
+// for(k=0;k<mails.length;k++){
+// Logger.log(mails[k].getDate());
+// Logger.log("k = "+k);
+//  }
+//  Logger.log('j = '+j);
+// sealed
+
  }
  
  
-}
+
 function getTypeStats(){
   // get number of messages from banks,facebook,google+,twitter
   getPlainStats();
