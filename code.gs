@@ -6,7 +6,7 @@ function myFunction()
  
 }
 function onOpen(e)
-{//this is executed eachtime the add on is run
+{//this is executed each time the add on is run
  updatePrefSheet();
 }
 function Sheetsetup() //should run after onInstall #takencare @uday
@@ -56,12 +56,13 @@ function getPlainStats() {//returns Total,unread,ImportantAndUnread
   return [total.length,unread,important,imp_unread];
   
 }
-function trashEmails()//analising new mails is just waste of time lets go back in time :@udaykrishna
+function getMailLength()//analising new mails is just waste of time lets go back in time :@udaykrishna
 {prop=PropertiesService.getUserProperties();
- var labels=0;
+ var total=0;
  var i=0;
  Logger.log("service started");
  var x=100;
+ var n=0;
  try{
  var maillist=GmailApp.getInboxThreads(i,i+x);}
  catch(e){
@@ -71,14 +72,15 @@ function trashEmails()//analising new mails is just waste of time lets go back i
  do
  { try{
    var maillist=GmailApp.getInboxThreads(i,i+x);
-   Logger.log("i = "+i);
-   Logger.log("50th maillist "+maillist[50].getFirstMessageSubject()+' count '+maillist[50].getMessageCount());
-   Logger.log("maillist = "+maillist.length);
+   n+=1;
+//   Logger.log("i = "+i);
+//   Logger.log("50th maillist "+maillist[50].getFirstMessageSubject()+' count '+maillist[50].getMessageCount());
+//   Logger.log("maillist = "+maillist.length);
   i+=x;
-  labels+=maillist.length;
+  total+=maillist.length;
   }
  catch(e){if(x>1){x/=2;continue;}else{Logger.log("total mails "+labels);break;}
- 
+ return [total,n];//returns total no of mails and total no. of requests sent.
  }
  }while(maillist.length>0)
 // sealed
@@ -139,7 +141,7 @@ function updatePrefSheet() //should run on every start #yet-to-implement @uday
   scriptproperties=PropertiesService.getUserProperties();
   var sheet=SpreadsheetApp.openById(scriptproperties.getProperty('defaults'));
   values=sheet.getSheetValues(8, 1, (managed+1), 3);
-  
+  //future goal is to change the storage from properties to Cache.@uday
   for(i=0;i<values.length;i++)
   {
    scriptproperties.setProperty('del_'+values[i][0],values[i][1]);
